@@ -9,14 +9,18 @@ class LogoutController extends Controller
 {
     public function logout(Request $request)
     {
-        // Kullanıcının sadece tek token'ını silmek için
-        $request->user()->currentAccessToken()->delete();
+        try {
+            if ($request->user()) {
+                $request->user()->currentAccessToken()->delete();
+            }
 
-        // Tüm token’ları silmek isterseniz:
-        // $request->user()->tokens()->delete();
-
-        return response()->json([
-            'message' => 'Çıkış yapıldı'
-        ], 200);
+            return response()->json([
+                'message' => 'Çıkış yapıldı'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Çıkış yapılırken bir hata oluştu'
+            ], 500);
+        }
     }
 }

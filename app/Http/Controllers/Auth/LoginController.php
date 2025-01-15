@@ -22,7 +22,10 @@ class LoginController extends Controller
         }
 
         $user = Auth::user();
-        $token = $user->createToken('api_token')->plainTextToken;
+        $token = $user->createToken(
+            'token',
+            expiresAt: now()->addMinutes(10)
+        )->plainTextToken;
 
         return response()->json([
             'message' => 'Giriş başarılı',

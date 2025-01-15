@@ -10,10 +10,6 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\SocialiteController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
 Route::prefix('v1/auth')->group(function () {
     // Sanctum & Normal Auth
     Route::post('register', [RegisterController::class, 'register']);
@@ -25,7 +21,7 @@ Route::prefix('v1/auth')->group(function () {
     Route::get('google/redirect', [SocialiteController::class, 'redirectToGoogle']);
     Route::get('google/callback', [SocialiteController::class, 'handleGoogleCallback']);
 
-    // Email Verification (opsiyonel, isterseniz web.php)
+    // Email Verification
     Route::get('email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
@@ -33,8 +29,12 @@ Route::prefix('v1/auth')->group(function () {
         ->middleware(['auth:sanctum'])
         ->name('verification.send');
 
-    // Aşağıdaki route'lar Auth gerektiriyor
+    // Authenticated Routes
     Route::middleware('auth:sanctum')->group(function () {
+        Route::get('user', function (Request $request) {
+            return $request->user();
+        });
+
         Route::post('logout', [LogoutController::class, 'logout']);
     });
 });
